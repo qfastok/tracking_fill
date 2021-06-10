@@ -15,7 +15,11 @@ class Picking(models.Model):
                      datetime.combine(datetime.now(), time.max)),
                     ('date', '>=',
                      datetime.combine(datetime.now(), time.min))])
-                if not line.lot_name:
-                    line.lot_name = datetime.now().strftime(
+                if not line.lot_id:
+                    serial = datetime.now().strftime(
                         '%y%m%d') + '/' + str(count).zfill(3)
+                    line.lot_id = self.env['stock.production.lot'].create({
+                        'name': serial,
+                        'product_id': line.product_id.id,
+                        'company_id': line.company_id.id}).id
         return super(Picking, self).button_validate()
